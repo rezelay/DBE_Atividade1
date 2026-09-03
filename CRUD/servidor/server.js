@@ -1,5 +1,5 @@
 const express = require("express");
-const app = express('express');
+const app = express();
 const mysql = require('mysql2');//isso pegara a versão mais atual do mysql que instalamos
 const cors = require("cors");
 
@@ -10,6 +10,11 @@ const db = mysql.createPool({
     password:"",
     database:"crudealunos"
 })
+
+
+app.use(cors({ origin: "http://localhost:3000" }));
+    
+app.use(express.json());
 
 /*app.get("/",(req, )=>{
     /*let SQL = "INSERT INTO alunos (id,nome, idade) VALUES (null,'Maria','28')";
@@ -22,11 +27,7 @@ const db = mysql.createPool({
         console.log(err);
     });
 }) */
-app.use(cors({
-      origin: "http://localhost:3000"
-    }));
-    
-app.use(express.json());
+
 app.get("/listar", (req, res) => {
     let SQL = "SELECT * FROM alunos";
     db.query(SQL, (err, result) => {
@@ -53,15 +54,18 @@ app.delete("/excluir/:id", (req, res) => {
     });
   });
 
-//app.use(cors());
 
-
-app.post("/register",(res)=>{
+app.post("/register",(req, res)=>{
     const {nome} = req.body;
     const {idade} = req.body;
      let SQL = "INSERT INTO alunos(nome,idade) VALUES (?,?)";
     db.query(SQL,[nome,idade],(err, result)=>{
-         console.log(err);
+        if (err) {
+            console.error(err);
+            res.status(500).json({ error: "Erro ao registrar aluno" });
+        } else {
+            res.json({ message: "Aluno registrado com sucesso" });
+        }
     })
  });
 
