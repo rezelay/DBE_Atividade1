@@ -2,11 +2,9 @@ import React, { useState } from 'react';
 import Axios from "axios";
 
 // Defina o componente CadastroAluno.
-function CadastroAluno() {
+function CadastroAluno({ onCadastro }) {
   // Defina os estados iniciais para 'values', 'nome' e 'idade'.
   const [values, setValues] = useState({ nome: '', idade: '' });
-  const [nome, setNome] = useState('');
-  const [idade, setIdade] = useState('');
 
   // Exiba no console os valores do estado 'values'.
   console.log(values);
@@ -21,14 +19,22 @@ function CadastroAluno() {
   };
 
   // Função para lidar com o clique no botão de cadastro.
-  const handleClickButton = () => {
+  const handleClickButton = (e) => {
+    // Evita que o formulário recarregue a página antes da requisição terminar.
+    e.preventDefault();
     // Faça uma solicitação POST para a URL especificada com os dados do aluno.
     Axios.post("http://localhost:3001/register", {
       nome: values.nome,
       idade: values.idade
     }).then((response) => {
       console.log(response); // Exiba a resposta da solicitação no console.
-    })
+      setValues({ nome: '', idade: '' });
+      if (onCadastro) {
+        onCadastro();
+      }
+    }).catch((error) => {
+      console.error(error);
+    });
   }
 
   // Renderize o formulário de cadastro de aluno.
@@ -36,7 +42,7 @@ function CadastroAluno() {
     <div className="container mt-5">
       <div className="row justify-content-center">
         <div className="col-md-6">
-         <div class="bg-primary p-3 mt-3 p-4 bg-primary rounded">
+         <div className="bg-primary p-3 mt-3 p-4 bg-primary rounded">
           <h2>Cadastro de Aluno</h2>
           <form onSubmit={handleClickButton}>
             <div className="form-group">
@@ -46,6 +52,7 @@ function CadastroAluno() {
                 className="form-control"
                 id="nome"
                 name='nome'
+                value={values.nome}
                 onChange={handleChangeValues}
               />
             </div>
@@ -56,6 +63,7 @@ function CadastroAluno() {
                 name='idade'
                 className="form-control"
                 id="idade"
+                value={values.idade}
                 onChange={handleChangeValues}
               />
             </div>

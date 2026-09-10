@@ -1,26 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Axios from "axios";
 
-function ListaAlunos() {
-  // Defina o estado para armazenar a lista de alunos.
-  const [alunos, setAlunos] = useState([]);
-  
+function ListaAlunos({ alunos, setAlunos }) {
   // Adicione o estado 'editingAluno' para rastrear o aluno atualmente em edição.
   const [editingAluno, setEditingAluno] = useState(null);
 
   // Adicione o estado 'editedData' para rastrear os dados editados.
   const [editedData, setEditedData] = useState({ nome: '', idade: '' });
-
-  // Use o useEffect para fazer uma solicitação GET e obter a lista de alunos.
-  useEffect(() => {
-    Axios.get("http://localhost:3001/listar")
-      .then((response) => {
-        setAlunos(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, []);
 
   // Função para lidar com a exclusão de um aluno.
   const handleExcluirAluno = (alunoId) => {
